@@ -11,7 +11,10 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Rational;
+import android.view.Gravity;
+import android.view.View;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -128,6 +131,7 @@ public class VideoPlayerActivity extends AppCompatActivity {
 
             player = new ExoPlayer.Builder(this).setLoadControl(loadControl).build();
             playerView.setPlayer(player);
+            playerView.setUseController(false);
 
             MediaItem mediaItem = new MediaItem.Builder()
                     .setUri(Uri.parse(rtspUrl))
@@ -182,10 +186,16 @@ public class VideoPlayerActivity extends AppCompatActivity {
     }
 
     private void showLatencyWarning() {
-        snackbar = Snackbar.make(playerView,
-                        "You're viewing old scenes", Snackbar.LENGTH_INDEFINITE)
+        Snackbar snackbar = Snackbar.make(playerView, "You're viewing old scenes", Snackbar.LENGTH_INDEFINITE)
                 .setAction("Refresh", v -> restartStream());
+
+        View snackbarView = snackbar.getView();
+        FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) snackbarView.getLayoutParams();
+        params.gravity = Gravity.TOP;
+        snackbarView.setLayoutParams(params);
+
         snackbar.show();
+
     }
     private void stopPlayer() {
         if (player != null) {
